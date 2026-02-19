@@ -599,7 +599,7 @@ body.menu-open {
 
 .hero__subtitle {
   order: 3;
-  max-width: 320px;
+  max-width: 330px;
   margin-inline: auto;
 }
 
@@ -678,6 +678,7 @@ body.menu-open {
   z-index: 1;
 }
 
+/*
 .advantages::before {
   top: -1px;
   height: 58px;
@@ -695,6 +696,7 @@ body.menu-open {
     radial-gradient(148px 44px at 50% 100%, var(--color-background) 99%, transparent 100%),
     radial-gradient(108px 38px at 88% 100%, var(--color-background) 99%, transparent 100%);
 }
+*/
 
 /* Card component (reusable) */
 .card {
@@ -1011,6 +1013,7 @@ body.menu-open {
   min-height: 0;
 }
 
+/*
 .how-to-order__step:first-child::after {
   content: "↓";
   position: absolute;
@@ -1022,6 +1025,7 @@ body.menu-open {
   font-weight: 400;
   line-height: 1;
 }
+*/
 
 .how-to-order__badge {
   width: 44px;
@@ -1134,12 +1138,12 @@ body.menu-open {
   width: var(--floating-size);
   height: var(--floating-size);
   border-radius: var(--radius-full);
-  background: var(--color-text-primary);
+  background: #5a524a;
   color: #fff;
   display: grid;
   place-items: center;
   text-decoration: none;
-  box-shadow: var(--elevation-3);
+  box-shadow: 0 10px 22px rgba(51, 43, 36, 0.28);
   transition: transform var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-base) var(--ease-out),
     background-color var(--duration-fast) var(--ease-out);
@@ -1156,6 +1160,10 @@ body.menu-open {
 }
 
 .floating-call__icon {
+  width: 23px;
+  height: 23px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
   transition: transform var(--duration-fast) var(--ease-out);
 }
 
