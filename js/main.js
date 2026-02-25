@@ -1,6 +1,6 @@
 (() => {
   const DEFAULT_LANGUAGE = "ru";
-  const STORAGE_KEY = "honey-landing-language";
+  const STORAGE_KEY = "lang";
 
   const translations = {
     ru: {
@@ -48,7 +48,8 @@
       "contacts.instagram": "Instagram",
       "footer.rights": "Петрович Мёд. Все права защищены.",
       "menu.open": "Открыть меню",
-      "menu.close": "Закрыть меню"
+      "menu.close": "Закрыть меню",
+      "lang.toggle.aria": "Сменить язык"
     },
     ro: {
       "nav.home": "Acasă",
@@ -95,31 +96,40 @@
       "contacts.instagram": "Instagram",
       "footer.rights": "Petrovici Miere. Toate drepturile rezervate.",
       "menu.open": "Deschide meniul",
-      "menu.close": "Închide meniul"
+      "menu.close": "Închide meniul",
+      "lang.toggle.aria": "Schimbă limba"
     }
-  };
-
-  const isSupportedLanguage = (lang) => Object.prototype.hasOwnProperty.call(translations, lang);
-  const getLanguage = (lang) => (isSupportedLanguage(lang) ? lang : DEFAULT_LANGUAGE);
-  const getTranslation = (lang, key) => {
-    const dictionary = translations[getLanguage(lang)] || {};
-    if (Object.prototype.hasOwnProperty.call(dictionary, key)) {
-      return dictionary[key];
-    }
-    return translations[DEFAULT_LANGUAGE][key] || "";
   };
 
   const menu = document.getElementById("mobile-menu");
   const openButton = document.querySelector(".header__menu-toggle");
   const closeButton = document.querySelector(".mobile-menu__close");
+  const langToggle = document.querySelector(".lang-toggle");
 
   const root = document.documentElement;
   const body = document.body;
   const openIcon = openButton ? openButton.querySelector(".header__menu-icon") : null;
   const closeDurationMs = 320;
+
   let closeTimer = null;
   let onMenuClosed = null;
-  let currentLanguage = DEFAULT_LANGUAGE;
+  let currentLang = DEFAULT_LANGUAGE;
+
+  const isSupportedLanguage = (lang) => Object.prototype.hasOwnProperty.call(translations, lang);
+  const normalizeLanguage = (lang) => (isSupportedLanguage(lang) ? lang : DEFAULT_LANGUAGE);
+
+  const getTranslation = (lang, key) => {
+    const normalizedLanguage = normalizeLanguage(lang);
+    if (translations[normalizedLanguage] && Object.prototype.hasOwnProperty.call(translations[normalizedLanguage], key)) {
+      return translations[normalizedLanguage][key];
+    }
+
+    if (translations[DEFAULT_LANGUAGE] && Object.prototype.hasOwnProperty.call(translations[DEFAULT_LANGUAGE], key)) {
+      return translations[DEFAULT_LANGUAGE][key];
+    }
+
+    return "";
+  };
 
   const setExpanded = (expanded) => {
     if (!openButton || !closeButton) {
@@ -137,10 +147,10 @@
     }
 
     openButton.classList.toggle("is-open", isOpen);
-    openButton.setAttribute("aria-label", getTranslation(currentLanguage, isOpen ? "menu.close" : "menu.open"));
+    openButton.setAttribute("aria-label", getTranslation(currentLang, isOpen ? "menu.close" : "menu.open"));
 
     if (closeButton) {
-      closeButton.setAttribute("aria-label", getTranslation(currentLanguage, "menu.close"));
+      closeButton.setAttribute("aria-label", getTranslation(currentLang, "menu.close"));
     }
 
     if (openIcon) {
@@ -257,33 +267,6 @@
     syncToggleAppearance(false);
   };
 
-  const switchers = Array.from(document.querySelectorAll("[data-lang-switcher]"));
-
-  const closeAllLanguageDropdowns = () => {
-    switchers.forEach((switcher) => {
-      switcher.classList.remove("is-open");
-      const currentButton = switcher.querySelector(".lang-switcher__current");
-      if (currentButton) {
-        currentButton.setAttribute("aria-expanded", "false");
-      }
-    });
-  };
-
-  const syncLanguageSwitchers = (lang) => {
-    switchers.forEach((switcher) => {
-      const currentButton = switcher.querySelector(".lang-switcher__current");
-      if (currentButton) {
-        currentButton.textContent = lang.toUpperCase();
-      }
-
-      switcher.querySelectorAll(".lang-switcher__option").forEach((option) => {
-        const isActive = option.getAttribute("data-lang") === lang;
-        option.classList.toggle("is-active", isActive);
-        option.setAttribute("aria-selected", String(isActive));
-      });
-    });
-  };
-
   const applyTranslations = (lang) => {
     document.querySelectorAll("[data-i18n]").forEach((element) => {
       const key = element.getAttribute("data-i18n");
@@ -302,77 +285,38 @@
         element.textContent = value;
       }
     });
-
-    document.documentElement.lang = lang;
-    syncToggleAppearance(Boolean(menu && !menu.hidden && menu.classList.contains("is-open")));
-    syncLanguageSwitchers(lang);
   };
 
   const setLanguage = (lang) => {
-    const normalizedLanguage = getLanguage(lang);
-    currentLanguage = normalizedLanguage;
+    const normalizedLanguage = normalizeLanguage(lang);
+    currentLang = normalizedLanguage;
+
     applyTranslations(normalizedLanguage);
+    document.documentElement.lang = normalizedLanguage;
+
+    if (langToggle) {
+      const nextLanguage = normalizedLanguage === "ru" ? "ro" : "ru";
+      langToggle.textContent = nextLanguage.toUpperCase();
+      langToggle.setAttribute("aria-label", getTranslation(normalizedLanguage, "lang.toggle.aria"));
+    }
+
+    syncToggleAppearance(Boolean(menu && !menu.hidden && menu.classList.contains("is-open")));
 
     try {
       localStorage.setItem(STORAGE_KEY, normalizedLanguage);
     } catch (error) {
-      // localStorage can be unavailable in private contexts.
+      // localStorage may be unavailable.
     }
   };
 
-  const initLanguageSwitcherEvents = () => {
-    switchers.forEach((switcher) => {
-      const currentButton = switcher.querySelector(".lang-switcher__current");
-      if (!currentButton) {
-        return;
-      }
+  const initLanguageToggle = () => {
+    if (!langToggle) {
+      return;
+    }
 
-      currentButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const shouldOpen = !switcher.classList.contains("is-open");
-        closeAllLanguageDropdowns();
-        switcher.classList.toggle("is-open", shouldOpen);
-        currentButton.setAttribute("aria-expanded", String(shouldOpen));
-      });
-
-      switcher.querySelectorAll(".lang-switcher__option").forEach((option) => {
-        const activateLanguage = () => {
-          const lang = option.getAttribute("data-lang") || DEFAULT_LANGUAGE;
-          setLanguage(lang);
-          closeAllLanguageDropdowns();
-        };
-
-        option.addEventListener("click", (event) => {
-          event.preventDefault();
-          activateLanguage();
-        });
-
-        option.addEventListener("keydown", (event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            activateLanguage();
-          }
-        });
-      });
-    });
-
-    document.addEventListener("click", (event) => {
-      const target = event.target;
-      if (!(target instanceof Element)) {
-        return;
-      }
-
-      if (!target.closest("[data-lang-switcher]")) {
-        closeAllLanguageDropdowns();
-      }
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-        closeAllLanguageDropdowns();
-      }
+    langToggle.addEventListener("click", () => {
+      const nextLanguage = currentLang === "ru" ? "ro" : "ru";
+      setLanguage(nextLanguage);
     });
   };
 
@@ -445,9 +389,9 @@
   };
 
   initMenu();
-  initLanguageSwitcherEvents();
+  initLanguageToggle();
   forceCloseMenu();
 
-  const initialLanguage = getLanguage(getStoredLanguage() || DEFAULT_LANGUAGE);
+  const initialLanguage = normalizeLanguage(getStoredLanguage() || DEFAULT_LANGUAGE);
   setLanguage(initialLanguage);
 })();
