@@ -1335,10 +1335,9 @@ body.menu-open {
 }
 
 .floating-call__icon {
-  width: 23px;
-  height: 23px;
-  object-fit: contain;
-  filter: brightness(0) invert(1);
+  font-size: 23px;
+  line-height: 1;
+  color: #ffffff;
   transition: transform var(--duration-fast) var(--ease-out);
 }
 
@@ -1807,6 +1806,10 @@ body.menu-open {
 }
 
 @media (min-width: 1024px) {
+  .floating-call {
+    display: none;
+  }
+
   .lang-toggle {
     margin-left: var(--space-2);
     order: 3;
