@@ -105,6 +105,7 @@
   const openButton = document.querySelector(".header__menu-toggle");
   const closeButton = document.querySelector(".mobile-menu__close");
   const langToggle = document.querySelector(".lang-toggle");
+  const header = document.querySelector(".header");
 
   const root = document.documentElement;
   const body = document.body;
@@ -380,6 +381,31 @@
     desktopMediaQuery.addEventListener("change", syncMenuForViewport);
   };
 
+  const initHeaderScrollEffect = () => {
+    if (!header) {
+      return;
+    }
+
+    let ticking = false;
+
+    const syncHeaderState = () => {
+      header.classList.toggle("is-scrolled", window.scrollY > 8);
+      ticking = false;
+    };
+
+    const requestSync = () => {
+      if (ticking) {
+        return;
+      }
+
+      ticking = true;
+      window.requestAnimationFrame(syncHeaderState);
+    };
+
+    syncHeaderState();
+    window.addEventListener("scroll", requestSync, { passive: true });
+  };
+
   const getStoredLanguage = () => {
     try {
       return localStorage.getItem(STORAGE_KEY);
@@ -390,6 +416,7 @@
 
   initMenu();
   initLanguageToggle();
+  initHeaderScrollEffect();
   forceCloseMenu();
 
   const initialLanguage = normalizeLanguage(getStoredLanguage() || DEFAULT_LANGUAGE);

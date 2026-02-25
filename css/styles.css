@@ -260,6 +260,15 @@ a {
   z-index: 50;
   background: var(--color-header-surface);
   border-bottom: 1px solid var(--color-header-border);
+  transition: background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.header.is-scrolled {
+  background: color-mix(in srgb, var(--color-header-surface) 90%, #ffffff);
+  border-bottom-color: color-mix(in srgb, var(--color-header-border) 86%, #cfc5b6);
+  box-shadow: 0 10px 24px rgba(63, 53, 42, 0.08);
 }
 
 html.menu-open .header,
@@ -334,6 +343,34 @@ body.menu-open .header {
 
 .header__nav-link:active {
   transform: translateY(1px);
+}
+
+@media (min-width: 1024px) {
+  .header__nav-link {
+    position: relative;
+  }
+
+  .header__nav-link::after {
+    content: "";
+    position: absolute;
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: 6px;
+    height: 2px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-primary) 88%, #d39f00);
+    transform: scaleX(0);
+    transform-origin: left;
+    opacity: 0;
+    transition: transform var(--duration-base) var(--ease-out),
+      opacity var(--duration-fast) var(--ease-out);
+  }
+
+  .header__nav-link:hover::after,
+  .header__nav-link:focus-visible::after {
+    transform: scaleX(1);
+    opacity: 1;
+  }
 }
 
 .header__menu-toggle {
@@ -512,9 +549,27 @@ body.menu-open {
 }
 
 .button--primary {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   background: var(--color-primary);
   color: var(--color-text-on-primary);
   box-shadow: 0 6px 16px rgba(244, 180, 0, 0.3);
+}
+
+.button--primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 18%,
+    rgba(255, 255, 255, 0.32) 48%,
+    rgba(255, 255, 255, 0) 82%
+  );
+  transform: translateX(-155%);
+  transition: transform var(--duration-slow) var(--ease-out);
 }
 
 .button--secondary {
@@ -526,6 +581,11 @@ body.menu-open {
 .button--primary:hover {
   transform: translateY(-1px);
   box-shadow: 0 10px 22px rgba(244, 180, 0, 0.42);
+}
+
+.button--primary:hover::before,
+.button--primary:focus-visible::before {
+  transform: translateX(155%);
 }
 
 .button--secondary:hover {
@@ -853,6 +913,9 @@ body.menu-open {
   border: 0;
   background: #ffffff;
   box-shadow: 0 3px 11px rgba(56, 47, 39, 0.12);
+  transition: transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
 }
 
 .product-card__media {
@@ -884,6 +947,17 @@ body.menu-open {
 .product-card:hover .product-card__image {
   transform: translateY(-1px) scale(1.015);
   box-shadow: var(--elevation-1);
+}
+
+.product-card:hover,
+.product-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 38px rgba(75, 63, 53, 0.18);
+}
+
+.product-card:hover .product-card__media,
+.product-card:focus-within .product-card__media {
+  border-color: color-mix(in srgb, var(--color-primary) 88%, #cf9f20);
 }
 
 .product-card__content {
@@ -1149,6 +1223,18 @@ body.menu-open {
     background-color var(--duration-fast) var(--ease-out);
 }
 
+.floating-call::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: inherit;
+  border: 1px solid rgba(244, 180, 0, 0.28);
+  opacity: 0;
+  transform: scale(0.96);
+  animation: floating-call-pulse 2.6s var(--ease-out) infinite;
+  pointer-events: none;
+}
+
 .floating-call:hover {
   transform: translateY(-2px) scale(1.03);
   box-shadow: 0 20px 42px rgba(75, 63, 53, 0.3);
@@ -1169,6 +1255,21 @@ body.menu-open {
 
 .floating-call:hover .floating-call__icon {
   transform: rotate(-8deg);
+}
+
+@keyframes floating-call-pulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  35% {
+    opacity: 0.42;
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
 }
 
 /* =========================================================
@@ -1556,6 +1657,11 @@ body.menu-open {
 
   .hero__image {
     animation: none !important;
+  }
+
+  .floating-call::before {
+    animation: none !important;
+    opacity: 0 !important;
   }
 }
 
