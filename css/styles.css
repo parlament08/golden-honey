@@ -1190,6 +1190,95 @@ body.menu-open {
   color: color-mix(in srgb, var(--color-text-primary) 78%, var(--color-primary));
 }
 
+/* Social icon effect: Telegram + Instagram */
+.contacts__item--phone .contacts__icon,
+.contacts__item--facebook .contacts__icon,
+.contacts__item--telegram .contacts__icon,
+.contacts__item--instagram .contacts__icon {
+  position: relative;
+  overflow: hidden;
+  border-width: 2px;
+  background: var(--color-surface);
+}
+
+.contacts__item--phone .contacts__icon,
+.contacts__item--facebook .contacts__icon,
+.contacts__item--telegram .contacts__icon,
+.contacts__item--instagram .contacts__icon {
+  cursor: pointer;
+}
+
+.contacts__item--phone .contacts__icon::before,
+.contacts__item--facebook .contacts__icon::before,
+.contacts__item--telegram .contacts__icon::before,
+.contacts__item--instagram .contacts__icon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  top: 100%;
+  transition: top var(--duration-slow) var(--ease-out);
+  z-index: 0;
+}
+
+.contacts__item--phone .contacts__icon::before {
+  background: #4b443d;
+}
+
+.contacts__item--facebook .contacts__icon::before {
+  background: #1877f2;
+}
+
+.contacts__item--telegram .contacts__icon::before {
+  background: #229ed9;
+}
+
+.contacts__item--instagram .contacts__icon::before {
+  background: linear-gradient(160deg, #feda75 0%, #fa7e1e 35%, #d62976 65%, #962fbf 82%, #4f5bd5 100%);
+}
+
+.contacts__icon-glyph {
+  position: relative;
+  z-index: 1;
+  font-size: 20px;
+  color: #2f2a25;
+  transition: color var(--duration-base) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+
+.contacts__item--telegram:hover .contacts__icon::before,
+.contacts__item--telegram:focus-within .contacts__icon::before,
+.contacts__item--phone:hover .contacts__icon::before,
+.contacts__item--phone:focus-within .contacts__icon::before,
+.contacts__item--facebook:hover .contacts__icon::before,
+.contacts__item--facebook:focus-within .contacts__icon::before,
+.contacts__item--instagram:hover .contacts__icon::before,
+.contacts__item--instagram:focus-within .contacts__icon::before {
+  top: 0;
+}
+
+.contacts__item--phone:hover .contacts__icon-glyph,
+.contacts__item--phone:focus-within .contacts__icon-glyph,
+.contacts__item--facebook:hover .contacts__icon-glyph,
+.contacts__item--facebook:focus-within .contacts__icon-glyph,
+.contacts__item--telegram:hover .contacts__icon-glyph,
+.contacts__item--telegram:focus-within .contacts__icon-glyph,
+.contacts__item--instagram:hover .contacts__icon-glyph,
+.contacts__item--instagram:focus-within .contacts__icon-glyph {
+  color: #ffffff;
+  transform: rotateY(360deg);
+}
+
+.contacts__item--phone:hover .contacts__icon,
+.contacts__item--phone:focus-within .contacts__icon,
+.contacts__item--facebook:hover .contacts__icon,
+.contacts__item--facebook:focus-within .contacts__icon,
+.contacts__item--telegram:hover .contacts__icon,
+.contacts__item--telegram:focus-within .contacts__icon,
+.contacts__item--instagram:hover .contacts__icon,
+.contacts__item--instagram:focus-within .contacts__icon {
+  border-color: transparent;
+}
+
 /* Footer */
 .footer {
   padding-block: var(--space-6);
