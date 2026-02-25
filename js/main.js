@@ -406,6 +406,76 @@
     window.addEventListener("scroll", requestSync, { passive: true });
   };
 
+  const initSectionRevealStagger = () => {
+    const revealSections = [
+      { section: ".advantages", items: [".advantages__title", ".advantages__item"] },
+      { section: ".products", items: [".products__title", ".products__item"] },
+      { section: ".how-to-order", items: [".how-to-order__title", ".how-to-order__step"] },
+      { section: ".contacts", items: [".contacts__title", ".contacts__item"] }
+    ];
+
+    const revealGroups = [];
+
+    revealSections.forEach((config) => {
+      const section = document.querySelector(config.section);
+      if (!section) {
+        return;
+      }
+
+      const collectedItems = [];
+      config.items.forEach((selector) => {
+        section.querySelectorAll(selector).forEach((element) => {
+          collectedItems.push(element);
+        });
+      });
+
+      if (!collectedItems.length) {
+        return;
+      }
+
+      section.classList.add("reveal-group");
+      collectedItems.forEach((element, index) => {
+        element.classList.add("reveal-item");
+        element.style.setProperty("--reveal-index", String(index));
+      });
+
+      revealGroups.push(section);
+    });
+
+    if (!revealGroups.length) {
+      return;
+    }
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion || typeof IntersectionObserver === "undefined") {
+      revealGroups.forEach((group) => {
+        group.classList.add("is-in-view");
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          entry.target.classList.add("is-in-view");
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.16,
+        rootMargin: "0px 0px -10% 0px"
+      }
+    );
+
+    revealGroups.forEach((group) => {
+      observer.observe(group);
+    });
+  };
+
   const getStoredLanguage = () => {
     try {
       return localStorage.getItem(STORAGE_KEY);
@@ -417,6 +487,7 @@
   initMenu();
   initLanguageToggle();
   initHeaderScrollEffect();
+  initSectionRevealStagger();
   forceCloseMenu();
 
   const initialLanguage = normalizeLanguage(getStoredLanguage() || DEFAULT_LANGUAGE);
