@@ -399,7 +399,9 @@
             return;
           }
 
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
+          const headerOffset = header ? header.offsetHeight + 8 : 82;
+          const targetTop = Math.max(0, target.getBoundingClientRect().top + window.scrollY - headerOffset);
+          window.scrollTo({ top: targetTop, behavior: "smooth" });
         });
       });
     });
