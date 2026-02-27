@@ -913,6 +913,50 @@ body.menu-open {
   transform: translateY(-2px);
 }
 
+@keyframes advantages-assemble-icon {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes advantages-assemble-divider {
+  from {
+    opacity: 0;
+    transform: scaleX(0.45);
+  }
+  to {
+    opacity: 0.85;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes advantages-assemble-title {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes advantages-assemble-text {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (hover: hover) and (pointer: fine) {
   .advantages__item {
     transition: transform 220ms var(--ease-out), box-shadow 240ms var(--ease-out), background-color 240ms var(--ease-out);
@@ -927,6 +971,35 @@ body.menu-open {
   .advantages__item:is(:hover, :focus-visible)::after {
     opacity: 1;
     transform: scaleX(1);
+  }
+}
+
+@media (max-width: 767px) {
+  .advantages.advantages--reveal-ready .advantages__item .advantages__icon,
+  .advantages.advantages--reveal-ready .advantages__item .advantages__divider,
+  .advantages.advantages--reveal-ready .advantages__item .advantages__item-title,
+  .advantages.advantages--reveal-ready .advantages__item .advantages__item-text {
+    opacity: 0;
+  }
+
+  .advantages.advantages--reveal-ready .advantages__item .advantages__divider {
+    transform-origin: center;
+  }
+
+  .advantages.advantages--reveal-ready .advantages__item.is-visible .advantages__icon {
+    animation: advantages-assemble-icon 320ms var(--ease-out) forwards;
+  }
+
+  .advantages.advantages--reveal-ready .advantages__item.is-visible .advantages__divider {
+    animation: advantages-assemble-divider 300ms var(--ease-out) 90ms forwards;
+  }
+
+  .advantages.advantages--reveal-ready .advantages__item.is-visible .advantages__item-title {
+    animation: advantages-assemble-title 340ms var(--ease-out) 160ms forwards;
+  }
+
+  .advantages.advantages--reveal-ready .advantages__item.is-visible .advantages__item-text {
+    animation: advantages-assemble-text 360ms var(--ease-out) 240ms forwards;
   }
 }
 
@@ -2169,6 +2242,14 @@ body.menu-open {
     font-size: 20px;
     line-height: 1.45;
     max-width: 480px;
+  }
+
+  .hero__header {
+    transform: translateY(-24px);
+  }
+
+  .hero__actions {
+    transform: translateY(-12px);
   }
 
   .hero__visual::after {
