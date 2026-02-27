@@ -42,6 +42,16 @@
       "order.step2.title": "Осуществляем доставку либо самовывоз",
       "order.step2.text": "Получите свежий мёд с доставкой или передадим при встрече",
       "contacts.title": "КОНТАКТЫ",
+      "contacts.lead": "Свяжитесь с нами или выберите удобную точку самовывоза.",
+      "contacts.city1": "Кишинев",
+      "contacts.city2": "Дондюшаны",
+      "contacts.pickup": "Самовывоз / точка выдачи",
+      "contacts.phone1.aria": "Позвонить в Кишинев: +373 69 396 624",
+      "contacts.phone2.aria": "Позвонить в Дондюшаны: +373 69 494 508",
+      "contacts.social.aria": "Социальные сети",
+      "contacts.facebook.aria": "Открыть Facebook",
+      "contacts.telegram.aria": "Открыть Telegram",
+      "contacts.instagram.aria": "Открыть Instagram",
       "contacts.telegram": "Telegram",
       "contacts.facebook": "Facebook",
       "contacts.youtube": "YouTube",
@@ -90,6 +100,16 @@
       "order.step2.title": "Livrare sau ridicare personală",
       "order.step2.text": "Primiți miere proaspătă prin livrare sau predare personală",
       "contacts.title": "CONTACTE",
+      "contacts.lead": "Contactați-ne sau alegeți un punct convenabil de ridicare.",
+      "contacts.city1": "Chișinău",
+      "contacts.city2": "Dondușeni",
+      "contacts.pickup": "Ridicare / punct de preluare",
+      "contacts.phone1.aria": "Sună în Chișinău: +373 69 396 624",
+      "contacts.phone2.aria": "Sună în Dondușeni: +373 69 494 508",
+      "contacts.social.aria": "Rețele sociale",
+      "contacts.facebook.aria": "Deschide Facebook",
+      "contacts.telegram.aria": "Deschide Telegram",
+      "contacts.instagram.aria": "Deschide Instagram",
       "contacts.telegram": "Telegram",
       "contacts.facebook": "Facebook",
       "contacts.youtube": "YouTube",
@@ -285,6 +305,20 @@
       } else {
         element.textContent = value;
       }
+    });
+
+    document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+      const key = element.getAttribute("data-i18n-aria-label");
+      if (!key) {
+        return;
+      }
+
+      const value = getTranslation(lang, key);
+      if (!value) {
+        return;
+      }
+
+      element.setAttribute("aria-label", value);
     });
   };
 
