@@ -18,8 +18,8 @@
       "hero.title.small": "НАТУРАЛЬНЫЙ",
       "hero.title.big": "МЁД",
       "hero.subtitle": "Вкусный органический мёд<br />прямо с пасеки",
-      "hero.cta.order": "Заказать",
-      "hero.cta.about": "О мёде",
+      "hero.cta.order": "Заказать мёд",
+      "hero.cta.about": "Узнать ассортимент",
       "advantages.title": "ПОЧЕМУ ПОКУПАЮТ<br />НАШ МЁД",
       "advantages.natural.title": "Натуральный продукт",
       "advantages.natural.text": "Чистый мёд без сиропов и добавок.",
@@ -76,8 +76,8 @@
       "hero.title.small": "MIERE",
       "hero.title.big": "NATURALĂ",
       "hero.subtitle": "Miere organică gustoasă<br />direct de la stupină",
-      "hero.cta.order": "Comandă",
-      "hero.cta.about": "Despre miere",
+      "hero.cta.order": "Comandă miere",
+      "hero.cta.about": "Vezi sortimentul",
       "advantages.title": "DE CE ALEG CLIENȚII<br />MIEREA NOASTRĂ",
       "advantages.natural.title": "Produs natural",
       "advantages.natural.text": "Miere curată, fără siropuri și aditivi.",
@@ -440,9 +440,218 @@
     window.addEventListener("scroll", requestSync, { passive: true });
   };
 
+  const initHeroMotion = () => {
+    const hero = document.querySelector(".hero");
+    const heroVisual = document.querySelector(".hero__visual");
+    if (!hero || !heroVisual) {
+      return;
+    }
+
+    const tabletQuery = window.matchMedia("(min-width: 768px)");
+    const desktopPointerQuery = window.matchMedia("(min-width: 1024px) and (hover: hover)");
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    let isActive = false;
+    let rafId = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let currentScroll = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let targetScroll = 0;
+    let motionIntensity = 12;
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+    const syncMotionIntensity = () => {
+      const value = Number.parseFloat(getComputedStyle(hero).getPropertyValue("--hero-motion-intensity"));
+      motionIntensity = Number.isFinite(value) ? clamp(value, 6, 24) : 12;
+    };
+    const clearAnimationFrame = () => {
+      if (!rafId) {
+        return;
+      }
+      window.cancelAnimationFrame(rafId);
+      rafId = 0;
+    };
+
+    const applyValues = () => {
+      hero.style.setProperty("--hero-parallax-x", `${currentX.toFixed(2)}px`);
+      hero.style.setProperty("--hero-parallax-y", `${currentY.toFixed(2)}px`);
+      hero.style.setProperty("--hero-scroll-y", `${currentScroll.toFixed(2)}px`);
+    };
+
+    const animate = () => {
+      currentX += (targetX - currentX) * 0.12;
+      currentY += (targetY - currentY) * 0.12;
+      currentScroll += (targetScroll - currentScroll) * 0.1;
+      applyValues();
+
+      const isSettled =
+        Math.abs(targetX - currentX) < 0.05 &&
+        Math.abs(targetY - currentY) < 0.05 &&
+        Math.abs(targetScroll - currentScroll) < 0.05;
+
+      if (isSettled) {
+        rafId = 0;
+        return;
+      }
+
+      rafId = window.requestAnimationFrame(animate);
+    };
+
+    const requestAnimate = () => {
+      if (rafId) {
+        return;
+      }
+      rafId = window.requestAnimationFrame(animate);
+    };
+
+    const onScroll = () => {
+      const rect = hero.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || 1;
+      const centerOffset = rect.top + rect.height / 2 - viewportHeight / 2;
+      targetScroll = clamp((-centerOffset / viewportHeight) * (motionIntensity * 1.35), -motionIntensity, motionIntensity);
+      requestAnimate();
+    };
+
+    const onPointerMove = (event) => {
+      if (!desktopPointerQuery.matches) {
+        return;
+      }
+
+      const rect = hero.getBoundingClientRect();
+      const normalizedX = (event.clientX - rect.left) / rect.width - 0.5;
+      const normalizedY = (event.clientY - rect.top) / rect.height - 0.5;
+      targetX = clamp(normalizedX * motionIntensity, -motionIntensity, motionIntensity);
+      targetY = clamp(normalizedY * (motionIntensity * 0.8), -(motionIntensity * 0.75), motionIntensity * 0.75);
+      requestAnimate();
+    };
+
+    const onResize = () => {
+      syncMotionIntensity();
+      onScroll();
+    };
+
+    const onPointerLeave = () => {
+      targetX = 0;
+      targetY = 0;
+      requestAnimate();
+    };
+
+    const enableMotion = () => {
+      if (isActive) {
+        return;
+      }
+
+      isActive = true;
+      hero.classList.add("hero--motion-active");
+      hero.classList.remove("hero--entered");
+      requestAnimationFrame(() => {
+        hero.classList.add("hero--entered");
+      });
+
+      syncMotionIntensity();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onResize, { passive: true });
+      hero.addEventListener("pointermove", onPointerMove);
+      hero.addEventListener("pointerleave", onPointerLeave);
+      onScroll();
+    };
+
+    const disableMotion = () => {
+      if (!isActive) {
+        return;
+      }
+
+      isActive = false;
+      clearAnimationFrame();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      hero.removeEventListener("pointermove", onPointerMove);
+      hero.removeEventListener("pointerleave", onPointerLeave);
+
+      targetX = 0;
+      targetY = 0;
+      targetScroll = 0;
+      currentX = 0;
+      currentY = 0;
+      currentScroll = 0;
+      applyValues();
+      hero.classList.remove("hero--motion-active");
+      hero.classList.add("hero--entered");
+    };
+
+    const syncHeroMotionState = () => {
+      const shouldEnable = tabletQuery.matches && !reducedMotionQuery.matches;
+      if (shouldEnable) {
+        enableMotion();
+      } else {
+        disableMotion();
+      }
+    };
+
+    syncHeroMotionState();
+    tabletQuery.addEventListener("change", syncHeroMotionState);
+    reducedMotionQuery.addEventListener("change", syncHeroMotionState);
+    desktopPointerQuery.addEventListener("change", onPointerLeave);
+  };
+
+  const initAdvantagesInteractions = () => {
+    const section = document.querySelector(".advantages");
+    if (!section) {
+      return;
+    }
+
+    const cards = Array.from(section.querySelectorAll(".advantages__item"));
+    if (!cards.length) {
+      return;
+    }
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      cards.forEach((card) => {
+        card.classList.add("is-visible");
+      });
+      return;
+    }
+
+    section.classList.add("advantages--reveal-ready");
+    cards.forEach((card, index) => {
+      card.style.setProperty("--advantages-delay", `${index * 80}ms`);
+    });
+
+    if (typeof IntersectionObserver === "undefined") {
+      cards.forEach((card) => {
+        card.classList.add("is-visible");
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries, currentObserver) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          entry.target.classList.add("is-visible");
+          currentObserver.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.22,
+        rootMargin: "0px 0px -8% 0px"
+      }
+    );
+
+    cards.forEach((card) => {
+      observer.observe(card);
+    });
+  };
+
   const initSectionRevealStagger = () => {
     const revealSections = [
-      { section: ".advantages", items: [".advantages__title", ".advantages__item"] },
+      { section: ".advantages", items: [".advantages__title"] },
       { section: ".products", items: [".products__title", ".products__item"] },
       { section: ".how-to-order", items: [".how-to-order__title", ".how-to-order__step"] },
       { section: ".contacts", items: [".contacts__title", ".contacts__item"] }
@@ -521,6 +730,8 @@
   initMenu();
   initLanguageToggle();
   initHeaderScrollEffect();
+  initHeroMotion();
+  initAdvantagesInteractions();
   initSectionRevealStagger();
   forceCloseMenu();
 
