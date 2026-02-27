@@ -649,10 +649,95 @@
     });
   };
 
+  const initProductsInteractions = () => {
+    const section = document.querySelector(".products");
+    if (!section) {
+      return;
+    }
+
+    const cards = Array.from(section.querySelectorAll(".products__item"));
+    if (!cards.length) {
+      return;
+    }
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      cards.forEach((card) => {
+        card.classList.add("is-visible");
+      });
+      return;
+    }
+
+    section.classList.add("products--reveal-ready");
+    cards.forEach((card, index) => {
+      card.style.setProperty("--products-delay", `${index * 80}ms`);
+    });
+
+    if (typeof IntersectionObserver === "undefined") {
+      cards.forEach((card) => {
+        card.classList.add("is-visible");
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries, currentObserver) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          entry.target.classList.add("is-visible");
+          currentObserver.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.2,
+        rootMargin: "0px 0px -8% 0px"
+      }
+    );
+
+    cards.forEach((card) => {
+      observer.observe(card);
+    });
+  };
+
+  const initHowToOrderVisualReveal = () => {
+    const section = document.querySelector(".how-to-order");
+    if (!section) {
+      return;
+    }
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion || typeof IntersectionObserver === "undefined") {
+      section.classList.add("how-to-order--in-view");
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries, currentObserver) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          entry.target.classList.add("how-to-order--in-view");
+          currentObserver.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.2,
+        rootMargin: "0px 0px -8% 0px"
+      }
+    );
+
+    observer.observe(section);
+  };
+
   const initSectionRevealStagger = () => {
     const revealSections = [
       { section: ".advantages", items: [".advantages__title"] },
-      { section: ".products", items: [".products__title", ".products__item"] },
+      { section: ".products", items: [".products__title"] },
       { section: ".how-to-order", items: [".how-to-order__title", ".how-to-order__step"] },
       { section: ".contacts", items: [".contacts__title", ".contacts__item"] }
     ];
@@ -732,6 +817,8 @@
   initHeaderScrollEffect();
   initHeroMotion();
   initAdvantagesInteractions();
+  initProductsInteractions();
+  initHowToOrderVisualReveal();
   initSectionRevealStagger();
   forceCloseMenu();
 
