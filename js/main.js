@@ -56,7 +56,7 @@
       "contacts.facebook": "Facebook",
       "contacts.youtube": "YouTube",
       "contacts.instagram": "Instagram",
-      "footer.rights": "Петрович Мёд. Все права защищены.",
+      "footer.rights": "DorDeMiere. Все права защищены.",
       "menu.open": "Открыть меню",
       "menu.close": "Закрыть меню",
       "lang.toggle.aria": "Сменить язык"
@@ -114,7 +114,7 @@
       "contacts.facebook": "Facebook",
       "contacts.youtube": "YouTube",
       "contacts.instagram": "Instagram",
-      "footer.rights": "Petrovici Miere. Toate drepturile rezervate.",
+      "footer.rights": "DorDeMiere. Toate drepturile rezervate.",
       "menu.open": "Deschide meniul",
       "menu.close": "Închide meniul",
       "lang.toggle.aria": "Schimbă limba"
@@ -438,6 +438,126 @@
 
     syncHeaderState();
     window.addEventListener("scroll", requestSync, { passive: true });
+  };
+
+  const initActiveNavigation = () => {
+    const navLinks = Array.from(
+      document.querySelectorAll(".header__nav-link[href^=\"#\"], .mobile-menu__link[href^=\"#\"]")
+    );
+    if (!navLinks.length) {
+      return;
+    }
+
+    const sectionEntries = [];
+    navLinks.forEach((link) => {
+      const href = link.getAttribute("href");
+      if (!href || href.length < 2) {
+        return;
+      }
+
+      const target = document.querySelector(href);
+      if (!target) {
+        return;
+      }
+
+      if (!sectionEntries.some((entry) => entry.id === target.id)) {
+        sectionEntries.push({ id: target.id, element: target });
+      }
+    });
+
+    if (!sectionEntries.length) {
+      return;
+    }
+
+    let activeId = "";
+    let ticking = false;
+
+    const setActive = (id) => {
+      if (id === activeId) {
+        return;
+      }
+
+      activeId = id;
+      navLinks.forEach((link) => {
+        const isActive = Boolean(id) && link.getAttribute("href") === `#${id}`;
+        link.classList.toggle("is-active", isActive);
+        if (isActive) {
+          link.setAttribute("aria-current", "true");
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
+    };
+
+    const syncActiveSection = () => {
+      const headerOffset = (header ? header.offsetHeight : 72) + 20;
+      const scrollPosition = window.scrollY + headerOffset;
+      let nextActiveId = "";
+
+      sectionEntries.forEach((entry) => {
+        if (scrollPosition >= entry.element.offsetTop) {
+          nextActiveId = entry.id;
+        }
+      });
+
+      setActive(nextActiveId);
+      ticking = false;
+    };
+
+    const requestSync = () => {
+      if (ticking) {
+        return;
+      }
+
+      ticking = true;
+      window.requestAnimationFrame(syncActiveSection);
+    };
+
+    syncActiveSection();
+    window.addEventListener("scroll", requestSync, { passive: true });
+    window.addEventListener("resize", requestSync, { passive: true });
+  };
+
+  const initDesktopPhoneLock = () => {
+    const phoneLinks = Array.from(document.querySelectorAll(".contacts__phone[href^=\"tel:\"]"));
+    if (!phoneLinks.length) {
+      return;
+    }
+
+    const desktopQuery = window.matchMedia("(min-width: 1024px)");
+
+    const blockIfDesktop = (event) => {
+      if (!desktopQuery.matches) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    const syncDesktopState = () => {
+      phoneLinks.forEach((link) => {
+        if (desktopQuery.matches) {
+          link.setAttribute("aria-disabled", "true");
+          link.setAttribute("tabindex", "-1");
+        } else {
+          link.removeAttribute("aria-disabled");
+          link.removeAttribute("tabindex");
+        }
+      });
+    };
+
+    phoneLinks.forEach((link) => {
+      link.addEventListener("click", blockIfDesktop);
+      link.addEventListener("keydown", (event) => {
+        if ((event.key === "Enter" || event.key === " ") && desktopQuery.matches) {
+          event.preventDefault();
+        }
+      });
+    });
+
+    syncDesktopState();
+    desktopQuery.addEventListener("change", syncDesktopState);
   };
 
   const initHeroMotion = () => {
@@ -815,6 +935,8 @@
   initMenu();
   initLanguageToggle();
   initHeaderScrollEffect();
+  initActiveNavigation();
+  initDesktopPhoneLock();
   initHeroMotion();
   initAdvantagesInteractions();
   initProductsInteractions();
