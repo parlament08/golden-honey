@@ -985,6 +985,21 @@ body.menu-open {
 }
 
 @media (max-width: 767px) {
+  .advantages__item {
+    display: block;
+    padding-block: 10px;
+    min-height: 0;
+    gap: 0;
+  }
+
+  .advantages__divider {
+    margin: 18px auto 20px;
+  }
+
+  .advantages__item-text {
+    margin-top: 8px;
+  }
+
   .advantages.advantages--reveal-ready .advantages__item .advantages__icon,
   .advantages.advantages--reveal-ready .advantages__item .advantages__divider,
   .advantages.advantages--reveal-ready .advantages__item .advantages__item-title,
