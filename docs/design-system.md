@@ -83,15 +83,15 @@
 
 | Token | Value |
 |---|---|
-| `color-primary` | `#F4B400` |
-| `color-background` | `#F5EFE4` |
+| `color-primary` | `#FFBE00` |
+| `color-background` | `#FFFAEB` |
 | `color-surface` | `#FFFFFF` |
-| `color-text-primary` | `#4B3F35` |
+| `color-text-primary` | `#55493D` |
 | `color-text-secondary` | `#6E6258` |
 | `color-text-muted` | `#9C9187` |
 | `color-text-on-primary` | `#FFFFFF` |
 | `color-border-light` | `#E6DED4` |
-| `color-border-accent` | `#F4B400` |
+| `color-border-accent` | `#FFBE00` |
 | `color-overlay` | `rgba(0,0,0,0.45)` |
 
 ## Radius Tokens
@@ -178,10 +178,10 @@
     "circle": "999px"
   },
   "colors": {
-    "primary": "#F4B400",
-    "background": "#F5EFE4",
+    "primary": "#FFBE00",
+    "background": "#FFFAEB",
     "surface": "#FFFFFF",
-    "text-primary": "#4B3F35",
+    "text-primary": "#55493D",
     "text-muted": "#9C9187"
   },
   "buttons": {
