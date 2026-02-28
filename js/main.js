@@ -100,7 +100,7 @@
       "order.step2.title": "Livrare sau ridicare personală",
       "order.step2.text": "Primiți miere proaspătă prin livrare sau predare personală",
       "contacts.title": "CONTACTE",
-      "contacts.lead": "Contactați-ne sau alegeți un punct convenabil de ridicare.",
+      "contacts.lead": "Cu drag răspundem la întrebările dvs. și alegem cea mai convenabilă modalitate de preluare.",
       "contacts.city1": "Chișinău",
       "contacts.city2": "Dondușeni",
       "contacts.pickup": "Ridicare / punct de preluare",
