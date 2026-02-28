@@ -934,6 +934,21 @@
     }
   };
 
+  const ensureInitialHeroPosition = () => {
+    const resetToTop = () => {
+      if (window.location.hash) {
+        history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+      }
+      window.scrollTo(0, 0);
+    };
+
+    resetToTop();
+    requestAnimationFrame(resetToTop);
+    window.addEventListener("load", resetToTop, { once: true });
+  };
+
+  ensureInitialHeroPosition();
+
   initMenu();
   initLanguageToggle();
   initHeaderScrollEffect();
