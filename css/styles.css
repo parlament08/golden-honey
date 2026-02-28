@@ -1088,6 +1088,7 @@ body.menu-open {
 
 /* Products */
 .products {
+  scroll-margin-top: calc(var(--header-height) + 12px);
   background: var(--color-background);
   padding-top: 52px;
   padding-bottom: 60px;
