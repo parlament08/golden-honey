@@ -986,18 +986,22 @@ body.menu-open {
 
 @media (max-width: 767px) {
   .advantages__item {
-    display: block;
+    display: grid;
+    justify-items: center;
+    align-content: start;
     padding-block: 10px;
     min-height: 0;
     gap: 0;
   }
 
-  .advantages__divider {
-    margin: 18px auto 20px;
+  .advantages__icon {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 
-  .advantages__item-text {
-    margin-top: 8px;
+  .advantages__icon img {
+    margin-inline: auto;
   }
 
   .advantages.advantages--reveal-ready .advantages__item .advantages__icon,
@@ -1049,6 +1053,20 @@ body.menu-open {
   font-size: 16px;
   line-height: 1.35;
   color: #433d38;
+}
+
+@media (max-width: 767px) {
+  .advantages__divider {
+    margin: 18px auto 22px;
+  }
+
+  .advantages__item-title {
+    margin: 0 0 10px;
+  }
+
+  .advantages__item-text {
+    margin: 0;
+  }
 }
 
 .advantages__title {
