@@ -1042,15 +1042,15 @@ body.menu-open {
 
 .advantages__item-title {
   margin: 0;
-  font-size: 18px;
-  line-height: 1.15;
+  font-size: 22px;
+  line-height: 1.2;
   font-weight: 700;
   color: var(--color-text-on-primary);
 }
 
 .advantages__item-text {
   margin-top: 0;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.35;
   color: #433d38;
 }
@@ -1076,6 +1076,14 @@ body.menu-open {
   letter-spacing: 0.01em;
   max-width: 370px;
   margin-inline: auto;
+}
+
+@media (min-width: 1024px) {
+  .advantages__item {
+    justify-content: flex-start;
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
 }
 
 /* Products */
